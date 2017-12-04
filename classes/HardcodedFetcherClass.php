@@ -15,8 +15,8 @@ class HardcodedFetcherClass implements IDataFetcherClass
     /**
      * Hardcoded data
      */
-    //const DATA = 'Хостел «Три таракана»,http://h3t.ru,1' . PHP_EOL;
-    const DATA = ',http://h3t.ru,1' . PHP_EOL;
+    const DATA = 'Хостел «Три таракана»,http://www.mail.ru,1' . PHP_EOL .
+                    ',http://h3t.ru,1' . PHP_EOL;
 
     /**
      * @inheritdoc

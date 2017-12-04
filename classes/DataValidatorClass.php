@@ -34,7 +34,6 @@ class DataValidatorClass
                             // validate
                             if (self::$validatorMethodName($dValue,$validatorParams)) {
                                 // validation ok
-                                print($validatorMethodName . ' = ok; ' . $dValue . PHP_EOL);
                                 $currentRow[$dKey] = $dValue;
                             } else {
                                 // validation fails, skip this data row
