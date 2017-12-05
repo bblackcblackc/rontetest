@@ -14,8 +14,8 @@ class SortDataProcessorClassTest extends PHPUnit\Framework\TestCase
     {
         $params = [
             'fields' => [
-                'name' => 'asc',
-                'url' => 'desc'
+                'name' => SORT_DESC_ORDER,
+                'key' => SORT_ASC_ORDER
             ]
         ];
 
@@ -51,17 +51,38 @@ class SortDataProcessorClassTest extends PHPUnit\Framework\TestCase
         ],
     ];
 
+    const TestArray1Ok  = [
+        [
+            'name' => 'name3',
+            'key' => 'key3'
+        ],
+        [
+            'name' => 'name2',
+            'key' => 'key1'
+        ],
+        [
+            'name' => 'name2',
+            'key' => 'key2'
+        ],
+        [
+            'name' => 'name2',
+            'key' => 'key3'
+        ],
+        [
+            'name' => 'name1',
+            'key' => 'key1'
+        ],
+    ];
+
     /**
      * @dataProvider providerProcessData
      */
     public function testProcessData($param0,$param1) {
 
-        print_r($this->instance->processData($param1));
-
-//        $this->assertNotEquals(
-//            $param0,
-//            json_encode($this->instance->processData($param1)) == json_encode($param1)
-//        );
+        $this->assertEquals(
+            $param0,
+            json_encode($this->instance->processData($param1)) == json_encode(self::TestArray1Ok)
+        );
     }
 
     public function providerProcessData() {

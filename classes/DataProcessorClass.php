@@ -26,6 +26,14 @@ class DataProcessorClass
      * @return array Processed data
      */
     public static function getProcessedData($data) {
-        return $data;
+
+        $tmpData = $data;
+
+        // iterate over all data processors
+        foreach (self::$dataProcessors as $processor) {
+            $tmpData = $processor->processData($tmpData);
+        }
+
+        return $tmpData;
     }
 }
