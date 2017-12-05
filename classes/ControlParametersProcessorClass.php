@@ -50,6 +50,12 @@ class ControlParametersProcessorClass
      * !!! This method will terminate the program after format listing
      */
     public function actionListFormats($param) {
+
+        // load all data formats
+        $classFiles = glob(CLASSPATH . '/*' . FORMAT_CLASS_NAME_POSTFIX . '*');
+        foreach ($classFiles as $classFile)
+            require_once $classFile;
+
         $classList = get_declared_classes();
         $formatNames = [];
 
@@ -75,19 +81,90 @@ class ControlParametersProcessorClass
      */
     public function actionForceFormat($param)
     {
-
         // check if we have such parser
         try {
-            if (class_exists($param . FORMAT_CLASS_NAME_POSTFIX, false) &&
+            if (class_exists($param . FORMAT_CLASS_NAME_POSTFIX, true) &&
                 method_exists($param . FORMAT_CLASS_NAME_POSTFIX, FORMAT_MODULE_NAME_METHOD)) {
 
                 // all ok, parser exists
-                // clear all parsers stack and add expected
-                FormatParserClass::clearFormatParsers();
                 $className = $param . FORMAT_CLASS_NAME_POSTFIX;
                 FormatParserClass::addFormatParserObject(new $className());
             } else {
                 throw new RSExceptionClass('No such parser - ' . $param);
+            }
+        } catch (RSExceptionClass $e) {
+            RSExceptionClass::log($e->getMessage());
+            exit(1);
+        }
+    }
+
+    /**
+     * @param string $param Not matters
+     * @method Method for processing '-listProcessors' option. Syntax: '-listProcessors'
+     *
+     * !!! This method will terminate the program after format listing
+     */
+    public function actionListProcessors($param) {
+
+        // load all data processors
+        $classFiles = glob(CLASSPATH . '/*' . DATAPROCESS_CLASS_NAME_POSTFIX . '*');
+        foreach ($classFiles as $classFile)
+            require_once $classFile;
+
+        $classList = get_declared_classes();
+        $dataProcessors = [];
+        $dataProcClassMatches = [];
+
+        // go over all classes
+        foreach ($classList as $className) {
+            // create list of Format parser classes
+            if (preg_match(DATAPROCESS_MODULE_CLASS_NAME_REGEX,$className,$dataProcClassMatches) &&
+                method_exists($className, DATAPROCESS_MODULE_PROCESS_METHOD)) {
+
+                $dataProcessors[] = $dataProcClassMatches[1];
+            }
+        }
+
+        print('Available processors: ' . implode(', ',$dataProcessors) . PHP_EOL);
+        exit(0);
+    }
+
+    /**
+     * @param string $param Specifies data processors and parameters
+     * @throws Exception
+     * @return void
+     * @method Method for processing '-processData' parameter
+     *
+     * Example:
+     * <exe> -processData=RandomChar='{ "fields": [ "name", "url" ] }'
+     * <exe> -processData=Sort='{ "fields": { "name": 0, "url": 1 } }'
+     *
+     * for sorting 0 means asc, 1 means desc
+     * parameter can be specified multiple times
+     */
+    public function actionProcessData($param)
+    {
+
+        if (empty($param)) {
+            return;
+        }
+
+        // parse parameter
+        $parsedParam = explode('=',$param);
+        $processorName = $parsedParam[0];
+        $processorParams = (array) json_decode($parsedParam[1]);
+
+        // check if we have such parser
+        try {
+            if (class_exists($processorName . DATAPROCESS_CLASS_NAME_POSTFIX, true) &&
+                method_exists($processorName . DATAPROCESS_CLASS_NAME_POSTFIX, DATAPROCESS_MODULE_PROCESS_METHOD)) {
+
+                // all ok, processor exists
+                $className = $processorName . DATAPROCESS_CLASS_NAME_POSTFIX;
+                DataProcessorClass::addDataProcessor(new $className($processorParams));
+
+            } else {
+                throw new RSExceptionClass('No such processor - ' . $param);
             }
         } catch (RSExceptionClass $e) {
             RSExceptionClass::log($e->getMessage());

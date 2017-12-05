@@ -32,17 +32,26 @@ class RandomCharDataProcessorClass implements IDataProcessorClass
     {
         $dataCopy = $inputData;
 
-        // iterate over each field from modify list
-        foreach ($this->parameters['fields'] as $fieldName) {
-            // iterate over input data
-            foreach ($dataCopy as &$row) {
-                if (isset($row[$fieldName])) {
-                    // dataset have this field
+        // if no fields specified -- exit
+        if (!isset($this->parameters['fields'])) {
+            return $inputData;
+        }
 
-                    // add random char to field
-                    $row[$fieldName] .= ' ' . chr(ord('A') + rand(0,25));
+        try {
+            // iterate over each field from modify list
+            foreach ($this->parameters['fields'] as $fieldName) {
+                // iterate over input data
+                foreach ($dataCopy as &$row) {
+                    if (isset($row[$fieldName])) {
+                        // dataset have this field
+
+                        // add random char to field
+                        $row[$fieldName] .= ' ' . chr(ord('A') + rand(0, 25));
+                    }
                 }
             }
+        } catch (RSExceptionClass $e) {
+            RSExceptionClass::log($e);
         }
 
         return $dataCopy;

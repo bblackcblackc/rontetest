@@ -15,12 +15,15 @@ print('Started.' . PHP_EOL);
 ControlParametersClass::addControlParametersObject(new CmdStrControlParametersClass());
 ControlParametersClass::addControlParametersObject(new HardcodedParametersClass());
 
-// Data format detectors & parsers modules load
-FormatParserClass::addFormatParserObject(new CSV3FormatParserClass());
-FormatParserClass::addFormatParserObject(new NullFormatParserClass());
-
 // parameters processor
 new ControlParametersProcessorClass(ControlParametersClass::getParams());
+
+// check if parsers loaded
+if (empty(FormatParserClass::getFormatParsers())) {
+    // load parsers
+    FormatParserClass::addFormatParserObject(new NullFormatParserClass());
+    FormatParserClass::addFormatParserObject(new CSV3FormatParserClass());
+}
 
 // Data fetchers
 $inputData = DataFetcherClass::getAllData();

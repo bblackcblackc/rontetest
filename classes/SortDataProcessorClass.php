@@ -32,7 +32,17 @@ class SortDataProcessorClass implements IDataProcessorClass
     {
         $dataCopy = $inputData;
 
-        usort($dataCopy,[__CLASS__,'_compare']);
+        // if no config -- return source data
+        if (!isset(self::$parameters['fields'])) {
+            return $inputData;
+        }
+
+        try {
+            // sort with user function
+            usort($dataCopy, [__CLASS__, '_compare']);
+        } catch (RSExceptionClass $e) {
+            RSExceptionClass::log($e);
+        }
 
         return $dataCopy;
     }

@@ -29,14 +29,6 @@ class FormatParserClass
     }
 
     /**
-     * Method clears format parser objects list
-     *
-     */
-    public static function clearFormatParsers() {
-        self::$formatParsers = [];
-    }
-
-    /**
      * Return Format parsers list
      *
      * @return array Format parsers list
