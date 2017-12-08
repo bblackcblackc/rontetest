@@ -19,7 +19,7 @@ All options available in short help
 php ./rsort.php -help
 ```
 
-All options actions coded by ControlParametersProcessorClass
+All option actions coded by ControlParametersProcessorClass
 
 
 ## Running tests
